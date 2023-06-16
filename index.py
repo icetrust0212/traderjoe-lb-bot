@@ -116,7 +116,7 @@ def removeLiquidity(bin_data):
     ids = []
     for bin in bin_data:
         id = int(bin['binId'])
-        amounts.append(pool.balanceof(account.address, id))
+        amounts.append(pool.functions.balanceOf(account.address, id).call())
         ids.append(id)
     deadline = web3.eth.get_block('latest').timestamp + 60
     nonce = web3.eth.get_transaction_count(account.address)
