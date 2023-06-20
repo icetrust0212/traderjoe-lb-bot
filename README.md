@@ -4,8 +4,7 @@
 pip install -r requirements.txt
 ```
 ## Environment
-
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+You need to edit .env file.
 ### Env
 ```bash
 AVALANCHE_RPC_URL=
