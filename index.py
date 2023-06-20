@@ -123,7 +123,7 @@ def job():
         time.sleep(10)
         swap(swapToken, swapRoute, maxValue)
         time.sleep(10)
-        addLiquidity(active_bin, active_bin <= target_bin_id_X)
+        addLiquidity(active_bin, active_bin <= target_bin_id_X, (active_bin <= bin_ids[0]) or (active_bin >= bin_ids[len(bin_ids) - 1]))
         time.sleep(10)
 
 def removeLiquidity(bin_data):
@@ -146,7 +146,7 @@ def removeLiquidity(bin_data):
 
 def swap(swapToken, route, maxValue):
     print("Swap")
-    amountIn = min(math.floor(swapToken.functions.balanceOf(account.address).call() / 2), maxValue)
+    amountIn = min(math.floor(swapToken.functions.balanceOf(account.address).call()), maxValue)
     if amountIn <= 100:
         print("Insufficient Amount")
         return
@@ -171,30 +171,33 @@ def swap(swapToken, route, maxValue):
     tx_receipt = web3.eth.wait_for_transaction_receipt(send_tx)
     print(tx_receipt) # Optional
 
-def addLiquidity(active_bin, isX):
+def addLiquidity(active_bin, isX, isOut):
     print("Add liquidity")
-    deltaIds, distributionX, distributionY = getLiquidityConfig(isX)
+    deltaIds, distributionX, distributionY = getLiquidityConfig(isX, isOut)
+    print(deltaIds, distributionX, distributionY)
     idSlippage = getIdSlippageFromPriceSlippage(SLIPPAGE, bin_step)
     nonce = web3.eth.get_transaction_count(account.address)
     deadline = web3.eth.get_block('latest').timestamp + 60
     amountX = min(tokenX.functions.balanceOf(account.address).call(), MAX_TOKEN_X_AMOUNT)
     amountY = min(tokenY.functions.balanceOf(account.address).call(), MAX_TOKEN_Y_AMOUNT)
-    amountMin = 100
+    amountXMin = 100
+    amountYMin = 100
+    if isX == True:
+        amountX = 0
+        amountXMin = 0
+    else:
+        amountY = 0
+        amountYMin = 0
 
-    print(deltaIds)
-    print(idSlippage)
-    print(distributionX)
-    print(distributionY)
-    print(amountX)
-    print(amountY)
+
     liquidityParameters = {
         'tokenX': tokenXAddress,
         'tokenY': tokenYAddress,
         'binStep': bin_step,
         'amountX': amountX,
         'amountY': amountY,
-        'amountXMin': amountMin,
-        'amountYMin': amountMin,
+        'amountXMin': amountXMin,
+        'amountYMin': amountYMin,
         'activeIdDesired': active_bin,
         'idSlippage': idSlippage,
         'deltaIds': deltaIds,

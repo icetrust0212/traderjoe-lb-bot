@@ -3,34 +3,27 @@ from constants import NETWORK, BNB_GAS_PRICE, ARBITRUM_GAS_PRICE
 import math
 from web3 import Web3
 
-def getLiquidityConfig(isX):
+def getLiquidityConfig(isX, isOut):
     deltaIds = []
     distributionX = []
     distributionY = []
-    length = TARGET_BIN_OFFSET * 2
-    print(isX)
+    length = TARGET_BIN_OFFSET
     if isX == True:
-        unitX = 1
-        unitY = 1 / (length - 0.5)
         for i in range(0, length):
-            deltaIds.append(i - length + 1)
-            if (i == length - 1):
-                distributionX.append(Web3.to_wei(unitX, 'ether'))
-                distributionY.append(Web3.to_wei(0.5 * unitY, 'ether') - 1000)
+            if isOut:
+                deltaIds.append(i - length)
             else:
-                distributionX.append(0)
-                distributionY.append(Web3.to_wei(unitY, 'ether'))
+                deltaIds.append(i - 2 * length + 1)
+            distributionX.append(0)
+            distributionY.append(Web3.to_wei(1 / length, 'ether'))
     else:
-        unitX = 1 / (length - 0.5)
-        unitY = 1
         for i in range(0, length):
-            deltaIds.append(i)
-            if (i == 0):
-                distributionX.append(Web3.to_wei(0.5 * unitX, 'ether') - 1000)
-                distributionY.append(Web3.to_wei(unitY, 'ether'))
+            if isOut:
+                deltaIds.append(i + 1)
             else:
-                distributionX.append(Web3.to_wei(unitX, 'ether'))
-                distributionY.append(0)
+                deltaIds.append(i + length)
+            distributionY.append(0)
+            distributionX.append(Web3.to_wei(1 / length, 'ether'))
     
     return deltaIds, distributionX, distributionY
 
