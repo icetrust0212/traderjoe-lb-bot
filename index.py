@@ -109,7 +109,7 @@ def job():
         swapToken = tokenX
         deleted_data = binData[-1 * TARGET_BIN_OFFSET:]
         maxValue = MAX_TOKEN_X_AMOUNT
-        if active_bin == target_bin_id_X:
+        if active_bin <= target_bin_id_X:
             deleted_data = binData[-1 * TARGET_BIN_OFFSET:]
             swapToken = tokenX
             maxValue = MAX_TOKEN_X_AMOUNT
