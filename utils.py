@@ -1,4 +1,5 @@
 from config import POOL_ADDRESS, PRIVATE_KEY, TARGET_BIN_OFFSET
+from constants import NETWORK, BNB_GAS_PRICE, ARBITRUM_GAS_PRICE
 import math
 from web3 import Web3
 
@@ -38,3 +39,15 @@ def getIdSlippageFromPriceSlippage(priceSlippage, binStep):
     return math.floor(
       math.log(1 + _priceSlippage) / math.log(1 + binStep / 10_000)
     )
+
+def get_build_parameters(chain_id, address, nonce):
+    build_parameters = {"chainId": chain_id, "from": address, "nonce": nonce}
+    if NETWORK == 'avalanche':
+        build_parameters = {"chainId": chain_id, "from": address, "nonce": nonce}
+    elif NETWORK == 'binance':
+        build_parameters = {"chainId": chain_id, "from": address, "nonce": nonce, "gasPrice": BNB_GAS_PRICE}
+    else:
+        build_parameters = {"chainId": chain_id, "from": address, "nonce": nonce, "gasPrice": ARBITRUM_GAS_PRICE}
+    return build_parameters
+
+
